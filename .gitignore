@@ -60,3 +60,5 @@ Thumbs.db
 __tests__/**/*.test.ts.snap
 __tests__/**/*.spec.ts.snap
 
+z-local/
+

@@ -3,6 +3,9 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "tsx watch src",
     "test": "vitest run",
