@@ -1,63 +1,41 @@
 name: Deploy Docs
 
 on:
+  # 推送到 main 分支时触发
   push:
-    branches:
-      - main
-      - master
+    branches: [main]
     paths:
-      - 'docs/**'
-      - '.github/workflows/docs-deploy.yml'
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
+      - 'docs/**' # 仅文档变更时触发
+      - '.github/workflows/deploy-docs.yml'
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
         with:
-          version: 10.20.0
+          fetch-depth: 0 # 拉取所有历史提交（用于最后更新时间）
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install pnpm
+        run: npm install -g pnpm
 
-      - name: Build docs
-        working-directory: docs
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: pnpm run docs:build
+      - name: Install Dependencies
+        run: pnpm install
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/.vitepress/dist
+      - name: Build Docs
+        run: pnpm --filter=docs run build
 
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/.vitepress/dist
+          # 部署到 gh-pages 分支
+          publish_branch: gh-pages

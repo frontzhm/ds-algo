@@ -7,9 +7,20 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "docs:dev": "turbo run dev --filter=docs",
-    "core:dev": "turbo run dev --filter=packages/core"
+    "core:dev": "turbo run dev --filter=packages/core",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx,.js",
+    "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx,.js --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json}\""
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "8.49.0",
+    "@typescript-eslint/parser": "8.49.0",
+    "eslint": "9.39.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "2.32.0",
+    "prettier": "3.7.4",
     "turbo": "2.6.3",
     "typescript": "5.9.3",
     "vitest": "4.0.15"

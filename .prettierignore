@@ -1,0 +1,6 @@
+# .prettierignore
+node_modules/
+dist/
+docs/.vitepress/
+*.md # 可选：忽略 Markdown 格式化（如需格式化可安装 prettier-plugin-md）
+
