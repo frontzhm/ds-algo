@@ -3,7 +3,7 @@ name: 部署文档到 GitHub Pages
 # 当push到main分支，且修改了apps/docs/**目录下的文件时，触发部署
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'docs/**'
   # 也可手动触发部署
@@ -40,7 +40,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 构建文档
-        run: pnpm docs:build
+        working-directory: docs
+        run: pnpm run docs:build
 
       - name: 部署文档到 GitHub Pages上
         uses: JamesIves/github-pages-deploy-action@v4
