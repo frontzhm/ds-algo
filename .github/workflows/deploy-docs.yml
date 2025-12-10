@@ -40,7 +40,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 构建文档
-        run: pnpm build:docs
+        run: pnpm docs:build
 
       - name: 部署文档到 GitHub Pages上
         uses: JamesIves/github-pages-deploy-action@v4
