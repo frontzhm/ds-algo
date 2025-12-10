@@ -56,3 +56,7 @@ Thumbs.db
 .pnpm-store/
 .pnpm-debug.log
 
+# Test files (keep structure but ignore test outputs)
+__tests__/**/*.test.ts.snap
+__tests__/**/*.spec.ts.snap
+
