@@ -1,0 +1,5 @@
+packages:
+  # 文档项目
+  - 'docs'
+  # 算法实现包
+  - 'packages/*'
