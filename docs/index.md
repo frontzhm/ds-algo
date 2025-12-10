@@ -1,24 +1,22 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
-
+title: 前端算法学习笔记
 hero:
-  name: '数据结构与算法'
-  text: '从前端角度理解数据结构与算法'
-  tagline: My great project tagline
+  name: 数据结构与算法
+  text: 前端工程师系统化学习指南
+  tagline: 从原理到实战，从刷题到面试
   actions:
-    - theme: brand1212
-      text: Markdown Examples
-      link: /markdown-examples
+    - theme: brand
+      text: 开始学习
+      link: /notes/01-prepare
     - theme: alt
-      text: API Examples
-      link: /api-examples
-
+      text: 查看代码实现
+      link: https://github.com/frontzhm/ds-algo/tree/main/packages
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: 前端定制
+    details: 聚焦前端场景，如虚拟列表、LRU 缓存、防抖节流等
+  - title: 代码可运行
+    details: 基于 TS 实现，配套单元测试，可直接复用
+  - title: 刷题导向
+    details: 覆盖 LeetCode 高频题，提供解题模板和思路
 ---
