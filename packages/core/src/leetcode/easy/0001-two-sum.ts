@@ -26,13 +26,7 @@ leetcodeTemplate(
   { id: 1, name: '两数之和', difficulty: 'easy' },
   twoSum,
   [[2, 7, 11, 15], 9],
-  [0, 1],
+  [0, 1]
 );
 
-leetcodeTemplate(
-  { id: 1, name: '两数之和', difficulty: 'easy' },
-  twoSum,
-  [[3, 2, 4], 6],
-  [1, 2],
-);
-
+leetcodeTemplate({ id: 1, name: '两数之和', difficulty: 'easy' }, twoSum, [[3, 2, 4], 6], [1, 2]);

@@ -8,6 +8,7 @@
     "test": "turbo run test",
     "docs:dev": "turbo run dev --filter=docs",
     "core:dev": "turbo run dev --filter=packages/core",
+    "core:test:watch": "turbo run test:watch --filter=@ds-algo/core",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx,.js",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx,.js --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,json}\"",

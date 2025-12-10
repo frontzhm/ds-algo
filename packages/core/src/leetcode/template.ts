@@ -42,4 +42,3 @@ export const boundaryCheck = {
   // 数值范围检查
   inRange: (num: number, min: number, max: number) => num >= min && num <= max,
 };
-
