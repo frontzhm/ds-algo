@@ -1,0 +1,50 @@
+name: 部署文档到 GitHub Pages
+
+# 当push到main分支，且修改了apps/docs/**目录下的文件时，触发部署
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+  # 也可手动触发部署
+  workflow_dispatch:
+
+# 需要有写入权限
+permissions:
+  contents: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 构建文档
+    runs-on: ubuntu-latest
+    steps:
+      - name: 读取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: 设置 Node.js版本
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+          cache: 'pnpm'
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建文档
+        run: pnpm build:docs
+
+      - name: 部署文档到 GitHub Pages上
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/.vitepress/dist
+          branch: gh-pages
+

@@ -52,6 +52,10 @@ Thumbs.db
 *.temp
 .cache/
 
+# VitePress
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
 # Package manager
 .pnpm-store/
 .pnpm-debug.log
