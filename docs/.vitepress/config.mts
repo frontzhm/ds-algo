@@ -25,8 +25,11 @@ export default defineConfig({
           link: '/notes/02-data-structures',
           items: [
             { text: '数组 & 链表', link: '/notes/02-data-structures#数组--链表' },
+            { text: '单向链表实现详解', link: '/notes/02-01-linked-list-implementation' },
             { text: '栈 & 队列', link: '/notes/02-data-structures#栈--队列' },
+            { text: '栈 & 队列实现详解', link: '/notes/02-03-stack-queue-implementation' },
             { text: '哈希表', link: '/notes/02-data-structures#哈希表' },
+            { text: '哈希表实现详解', link: '/notes/02-02-hash-table-implementation' },
             { text: '树 & 堆', link: '/notes/02-data-structures#树--堆' },
           ],
         },
