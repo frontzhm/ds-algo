@@ -17,7 +17,7 @@ export class ListNode<T> {
   constructor(val: T, next: ListNode<T> | null = null) {
     // 空值校验：确保节点值合法
     if (val === undefined || val === null) {
-      throw new Error('节点的值不能为undefined或null');
+      throw new Error('节点值不能为undefined或null');
     }
     this.val = val;
     this.next = next;
@@ -59,22 +59,33 @@ export class LinkedList<T> {
   }
 
   /**
-   * 私有方法：校验索引合法性
+   * 私有方法：校验索引合法性（插入场景）
    * @param index 待校验的索引值
-   * @returns {boolean} 索引合法返回 true
-   * @throws {Error} 索引非数字/越界时抛出错误
-   * @description 合法索引范围：0 <= index <= size()（插入场景）；0 <= index < size()（删除场景）
+   * @returns {boolean} 索引合法返回 true，否则返回 false
+   * @description 合法索引范围：0 <= index <= size()（插入场景）
    */
-  private isValidIndex(index: number): boolean {
+  private isValidIndexForInsert(index: number): boolean {
     // 校验索引类型：必须是有效数字
     if (typeof index !== 'number' || isNaN(index)) {
-      throw new Error('索引必须是有效数字');
+      return false;
     }
     // 校验索引范围：0 到 链表长度（包含）
-    if (!(index >= 0 && index <= this.size())) {
-      throw new Error(`索引值 ${index} 不在正常范围（0 ~ ${this.size()}）`);
+    return index >= 0 && index <= this.size();
+  }
+
+  /**
+   * 私有方法：校验索引合法性（删除场景）
+   * @param index 待校验的索引值
+   * @returns {boolean} 索引合法返回 true，否则返回 false
+   * @description 合法索引范围：0 <= index < size()（删除场景）
+   */
+  private isValidIndexForDelete(index: number): boolean {
+    // 校验索引类型：必须是有效数字
+    if (typeof index !== 'number' || isNaN(index)) {
+      return false;
     }
-    return true;
+    // 校验索引范围：0 到 链表长度（不包含）
+    return index >= 0 && index < this.size();
   }
 
   /**
@@ -97,7 +108,7 @@ export class LinkedList<T> {
    */
   private checkVal(val: T): void {
     if (val === null || val === undefined) {
-      throw new Error('值不能为null 或 undefined');
+      throw new Error('值不能为undefined或null');
     }
   }
 
@@ -148,13 +159,16 @@ export class LinkedList<T> {
    * 指定索引位置插入元素（时间复杂度 O(n)）
    * @param index 插入位置（0 ~ size()）
    * @param val 要插入的节点值
-   * @throws {Error} val 非法/索引越界时抛出错误
+   * @throws {Error} val 非法时抛出错误
+   * @description 索引越界时不插入，静默失败（符合测试期望）
    */
   insertAt(index: number, val: T): void {
     // 校验值合法性
     this.checkVal(val);
-    // 校验索引合法性
-    this.isValidIndex(index);
+    // 校验索引合法性（不合法时直接返回，不抛错）
+    if (!this.isValidIndexForInsert(index)) {
+      return;
+    }
 
     // 插入头部：复用 prepend 方法
     if (index === 0) {
@@ -197,16 +211,12 @@ export class LinkedList<T> {
   /**
    * 删除第一个匹配指定值的节点（时间复杂度 O(n)）
    * @param val 要删除的节点值
-   * @returns {boolean} 删除成功返回 true，失败（值非法/空链表/未找到）返回 false
+   * @returns {boolean} 删除成功返回 true，失败（空链表/未找到）返回 false
+   * @throws {Error} val 为 null/undefined 时抛出错误
    */
   delete(val: T): boolean {
-    // 校验值合法性（捕获错误，返回 false 而非抛错）
-    try {
-      this.checkVal(val);
-    } catch (e) {
-      console.warn('删除失败：', e);
-      return false;
-    }
+    // 校验值合法性（空值直接抛错，符合测试期望）
+    this.checkVal(val);
 
     // 检查空链表（捕获错误，返回 false 而非抛错）
     try {
@@ -261,12 +271,15 @@ export class LinkedList<T> {
    * @returns {boolean} 删除成功返回 true，失败（空链表/索引越界）返回 false
    */
   deleteAt(index: number): boolean {
-    // 校验空链表和索引合法性（捕获错误，返回 false 而非抛错）
+    // 检查空链表（捕获错误，返回 false 而非抛错）
     try {
       this.checkEmpty();
-      this.isValidIndex(index);
     } catch (e) {
       console.warn('删除失败：', e);
+      return false;
+    }
+    // 校验索引合法性（不合法时返回 false，不抛错）
+    if (!this.isValidIndexForDelete(index)) {
       return false;
     }
 
@@ -315,16 +328,12 @@ export class LinkedList<T> {
   /**
    * 查找第一个匹配指定值的节点（时间复杂度 O(n)）
    * @param val 要查找的节点值
-   * @returns {ListNode<T> | null} 找到返回节点对象，未找到/值非法返回 null
+   * @returns {ListNode<T> | null} 找到返回节点对象，未找到返回 null
+   * @throws {Error} val 为 null/undefined 时抛出错误
    */
   find(val: T): ListNode<T> | null {
-    // 校验值合法性（捕获错误，返回 null 而非抛错）
-    try {
-      this.checkVal(val);
-    } catch (e) {
-      console.warn('查找失败：', e);
-      return null;
-    }
+    // 校验值合法性（空值直接抛错，符合测试期望）
+    this.checkVal(val);
 
     // 从头节点开始遍历
     let cur = this.head;
@@ -428,7 +437,10 @@ export class LinkedList<T> {
     }
     // 遍历数组，添加非空元素到链表
     arr.forEach(item => {
-      if (item === null || item === undefined) return;
+      if (item === null || item === undefined) {
+        console.warn(`跳过非法值 ${item}：值不能为undefined或null`);
+        return;
+      }
       try {
         list.append(item);
       } catch (e) {
@@ -440,7 +452,7 @@ export class LinkedList<T> {
 
   /**
    * 可视化打印链表（调试用）
-   * @description 输出格式：1 -> 2 -> 3 -> null
+   * @description 输出格式：1 → 2 → 3 → null
    */
   print(): void {
     // 空链表直接打印 null
@@ -452,7 +464,7 @@ export class LinkedList<T> {
     let res = '';
     // 遍历拼接节点值
     while (cur !== null) {
-      res += `${cur.val} -> `;
+      res += `${cur.val} → `;
       cur = cur.next;
     }
     // 拼接尾节点标识

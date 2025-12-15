@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MinHeap, MaxHeap } from '../src/data-structures/tree';
+import { MinHeap, MaxHeap } from '../src/data-structures/heap';
 
 describe('MinHeap', () => {
   let heap: MinHeap<number>;
