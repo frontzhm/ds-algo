@@ -94,11 +94,9 @@ export class BinaryTree<T> {
       return;
     }
 
-    // 优化：用数组模拟双端队列，避免shift的O(n)开销（前端高频插入场景）
-    const queue: TreeNode<T>[] = [this.root];
-    let index = 0; // 用索引替代shift，O(1)访问
-    while (index < queue.length) {
-      const current = queue[index++];
+    const queue: TreeNode<T>[] = [this.root!];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
 
       if (!current.left) {
         current.left = newNode;
@@ -145,9 +143,8 @@ export class BinaryTree<T> {
     if (this.isEmpty()) return null;
 
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
-    while (index < queue.length) {
-      const current = queue[index++];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
       if (this.compare(current.val, val) === 0) {
         return current;
       }
@@ -170,11 +167,10 @@ export class BinaryTree<T> {
     let lastNode: TreeNode<T> | null = null;
     let lastNodeParent: TreeNode<T> | null = null;
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
 
     // 查找目标节点 + 最后一个节点及其父节点
-    while (index < queue.length) {
-      const current = queue[index++];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
       if (this.compare(current.val, val) === 0) {
         targetNode = current;
       }
@@ -284,7 +280,7 @@ export class BinaryTree<T> {
   }
 
   /**
-   * 层序遍历（优化：双端队列 + 索引优化）
+   * 层序遍历（优化：迭代实现，避免递归栈溢出）
    * @returns 遍历结果数组
    */
   levelOrder(): T[] {
@@ -292,9 +288,8 @@ export class BinaryTree<T> {
     if (this.isEmpty()) return result;
 
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
-    while (index < queue.length) {
-      const current = queue[index++];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
       result.push(current.val);
       if (current.left) queue.push(current.left);
       if (current.right) queue.push(current.right);
@@ -325,7 +320,7 @@ export class BinaryTree<T> {
   }
 
   /**
-   * 获取树的大小（优化：迭代 + 索引）
+   * 获取树的大小（优化：迭代实现，避免递归栈溢出）
    * @returns 节点总数
    */
   size(): number {
@@ -333,10 +328,9 @@ export class BinaryTree<T> {
 
     let count = 0;
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
-    while (index < queue.length) {
+    while (queue.length > 0) {
       count++;
-      const current = queue[index++];
+      const current = queue.shift()!;
       if (current.left) queue.push(current.left);
       if (current.right) queue.push(current.right);
     }
@@ -352,9 +346,8 @@ export class BinaryTree<T> {
 
     let minNode = this.root!;
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
-    while (index < queue.length) {
-      const current = queue[index++];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
       if (this.compare(current.val, minNode.val) < 0) {
         minNode = current;
       }
@@ -373,9 +366,8 @@ export class BinaryTree<T> {
 
     let maxNode = this.root!;
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
-    while (index < queue.length) {
-      const current = queue[index++];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
       if (this.compare(current.val, maxNode.val) > 0) {
         maxNode = current;
       }
@@ -467,9 +459,8 @@ export class BinaryTree<T> {
   *[Symbol.iterator](): Generator<T, void, void> {
     if (this.isEmpty()) return;
     const queue: TreeNode<T>[] = [this.root!];
-    let index = 0;
-    while (index < queue.length) {
-      const current = queue[index++];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
       yield current.val;
       if (current.left) queue.push(current.left);
       if (current.right) queue.push(current.right);

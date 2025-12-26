@@ -1,11 +1,11 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: '数据结构与算法学习笔记',
   description: '前端工程师的算法系统化学习指南',
   // 部署到 GitHub Pages 时的基础路径
-  base: process.env.GITHUB_REPOSITORY 
+  base: process.env.GITHUB_REPOSITORY
     ? `/${process.env.GITHUB_REPOSITORY.split('/')[1]}/`
     : '/ds-algo/',
   themeConfig: {
@@ -31,6 +31,7 @@ export default defineConfig({
             { text: '哈希表', link: '/notes/02-data-structures#哈希表' },
             { text: '哈希表实现详解', link: '/notes/02-02-hash-table-implementation' },
             { text: '树 & 堆', link: '/notes/02-data-structures#树--堆' },
+            { text: '二叉树实现详解', link: '/notes/02-04-binary-tree-implementation' },
           ],
         },
         {
@@ -47,9 +48,7 @@ export default defineConfig({
         },
       ],
     },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/frontzhm/ds-algo' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/frontzhm/ds-algo' }],
   },
   // 支持在 Markdown 中引用 TS 代码并语法高亮
   markdown: {
@@ -69,4 +68,4 @@ export default defineConfig({
     //   },
     // },
   },
-})
+});
