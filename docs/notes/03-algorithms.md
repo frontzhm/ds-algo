@@ -6,98 +6,423 @@
 
 ## 学习路径规划
 
-### 阶段一：基础技巧（必学）
+### 阶段一：基础工具+技巧（必学，每日练）
 
-1. **双指针** - 数组/链表问题的核心技巧
-2. **滑动窗口** - 连续子数组/子串问题
-3. **递归** - 分而治之的基础
+0. **排序/搜索** - 算法的“基础设施”
+   - 排序：快排、归并（搭配数组）
+   - 搜索：二分、DFS/BFS（搭配数组、二叉树）
+1. **双指针** - 数组/链表的核心技巧（⭐⭐⭐⭐⭐）
+2. **滑动窗口** - 连续子数组/子串问题（⭐⭐⭐⭐）
+3. **递归** - 分而治之的基础（搭配二叉树）（⭐⭐⭐⭐）
 
-### 阶段二：核心算法（重点）
+### 阶段二：核心算法（重点，周练）
 
-4. **动态规划（DP）** - 重叠子问题+最优子结构
-5. **回溯算法** - 穷举所有可能
-6. **贪心算法** - 局部最优到全局最优
+4. **动态规划（DP）** - 重叠子问题+最优子结构（⭐⭐⭐⭐⭐）
+5. **回溯算法** - 穷举所有可能（⭐⭐⭐⭐）
+6. **贪心算法** - 局部最优到全局最优（⭐⭐⭐）
 
-### 阶段三：高级应用（进阶）
+### 阶段三：高级应用（进阶，综合练）
 
-7. **分治算法** - 大问题拆解
-8. **排序算法** - 基础算法实现
-9. **搜索算法** - DFS/BFS/二分查找
+7. **分治算法** - 大问题拆解（搭配归并、合并K个链表）
+8. **复杂场景综合** - 多技巧结合（比如“双指针+DP”、“滑动窗口+哈希表”）
+
+## 避坑指南（关键）
+
+- 双指针：避免指针越界，明确“指针移动条件”
+- 动态规划：先写“状态定义”，再写“转移方程”
+- 回溯：必须剪枝，否则会超时
+- 贪心：先证明“贪心选择性质”，否则容易错
 
 ---
 
-## 一、双指针（Two Pointers）
+## 一、排序算法（Sorting）- 阶段一：基础工具
 
-双指针是数组/链表问题的核心技巧，通过维护两个指针来高效解决问题。
+排序是算法的基础，掌握常见排序算法有助于理解其他算法。
 
-### 1.1 快慢指针
+### 1.1 快速排序（Quick Sort）
 
-**适用场景：**
-- 链表环形问题（判断链表是否有环）
-- 找链表的中间节点
-- 删除链表的倒数第 k 个节点
-- 判断链表是否为回文
+**时间复杂度：** 平均 O(nlogn)，最坏 O(n²)  
+**空间复杂度：** O(logn)  
+**稳定性：** 不稳定
 
 **核心思想：**
-- 快指针每次走两步，慢指针每次走一步
-- 利用速度差找到特定位置或检测循环
 
-**经典题目：**
-- [141. 环形链表](https://leetcode.cn/problems/linked-list-cycle/)
-- [142. 环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
-- [876. 链表的中间结点](https://leetcode.cn/problems/middle-of-the-linked-list/)
-- [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
-
-### 1.2 左右指针
+- 选择一个基准元素（pivot）
+- 将数组分为两部分：小于基准和大于基准
+- 递归排序两部分
 
 **适用场景：**
-- 有序数组的两数之和
-- 反转字符串/数组
-- 二分查找
-- 回文判断
-- 盛水最多的容器
+
+- 一般情况下的高效排序
+- 数据量大且随机分布
+
+### 1.2 归并排序（Merge Sort）
+
+**时间复杂度：** O(nlogn)  
+**空间复杂度：** O(n)  
+**稳定性：** 稳定
 
 **核心思想：**
-- 左指针从数组开头，右指针从数组末尾
-- 根据条件移动指针，缩小搜索范围
 
-**经典题目：**
-- [167. 两数之和 II - 输入有序数组](https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/)
-- [344. 反转字符串](https://leetcode.cn/problems/reverse-string/)
-- [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
-- [125. 验证回文串](https://leetcode.cn/problems/valid-palindrome/)
-
-### 1.3 Vue3 diff 四个指针
+- 将数组不断二分，直到单个元素
+- 合并两个有序数组
+- 分治思想的典型应用
 
 **适用场景：**
+
+- 需要稳定排序
+- 链表排序
+- 外部排序
+
+### 1.3 堆排序（Heap Sort）
+
+**时间复杂度：** O(nlogn)  
+**空间复杂度：** O(1)  
+**稳定性：** 不稳定
+
+**核心思想：**
+
+- 构建最大堆/最小堆
+- 不断取出堆顶元素
+- 利用堆的性质排序
+
+**适用场景：**
+
+- 需要原地排序
+- TopK 问题
+
+---
+
+## 二、搜索算法（Searching）- 阶段一：基础工具
+
+### 2.1 二分查找（Binary Search）
+
+**时间复杂度：** O(logn)  
+**前提条件：** 有序数组
+
+**核心思想：**
+
+- 每次排除一半的搜索空间
+- 通过比较中间元素缩小范围
+
+**适用场景：**
+
+- 有序数组查找
+- 查找边界问题
+- 旋转数组查找
+
+**经典题目：**
+
+- [704. 二分查找](https://leetcode.cn/problems/binary-search/)
+- [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/)
+- [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/)
+
+### 2.2 DFS（深度优先搜索）
+
+**适用场景：**
+
+- 图的遍历
+- 树的遍历
+- 路径问题
+- 连通性问题
+
+**核心思想：**
+
+- 一条路走到黑，再回溯
+- 利用递归或栈实现
+
+**经典题目：**
+
+- [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/)
+- [695. 岛屿的最大面积](https://leetcode.cn/problems/max-area-of-island/)
+- [79. 单词搜索](https://leetcode.cn/problems/word-search/)
+
+### 2.3 BFS（广度优先搜索）
+
+**适用场景：**
+
+- 最短路径问题（无权图）
+- 层序遍历
+- 扩散问题
+
+**核心思想：**
+
+- 一层一层遍历
+- 利用队列实现
+
+**经典题目：**
+
+- [102. 二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/)
+- [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/)
+- [127. 单词接龙](https://leetcode.cn/problems/word-ladder/)
+
+---
+
+## 三、双指针（Two Pointers）- 阶段一：核心技巧 ⭐⭐⭐⭐⭐
+
+### 一、双指针是什么？
+
+**核心定义**：用**两个指针（索引）** 遍历数据结构（数组/链表），通过指针的"移动规则"减少遍历次数，将时间复杂度从 O(n²) 优化到 O(n)。
+
+简单说：不用嵌套循环遍历所有可能，而是用两个指针"协作"，一次遍历解决问题。
+
+### 二、双指针的3大分类（必掌握）
+
+双指针的核心是**"指针的移动规则"**，不同规则对应不同场景：
+
+#### 2.1 快慢指针（Fast & Slow Pointers）
+
+**指针位置**：两个指针从**同一端（通常是开头）** 出发
+
+**移动规则**：快指针每次走2步，慢指针每次走1步（或其他"速度差"）
+
+**适用场景**：链表/数组的"环形问题"、"找特定位置"
+
+**核心原理**：利用"速度差"制造"相对位置"——比如快指针先到终点，慢指针刚好在中间；或快指针追上慢指针，说明有环。
+
+**经典场景+模板+例题**：
+
+##### 场景1：判断链表是否有环
+
+**模板代码：**
+
+```typescript
+function hasCycle(head: ListNode | null): boolean {
+  let fast = head, slow = head;
+  while (fast && fast.next) {
+    fast = fast.next.next; // 快指针走2步
+    slow = slow.next;      // 慢指针走1步
+    if (fast === slow) return true; // 相遇则有环
+  }
+  return false;
+}
+```
+
+**对应例题：** [141. 环形链表](https://leetcode.cn/problems/linked-list-cycle/)
+
+##### 场景2：找链表中间节点
+
+**模板代码：**
+
+```typescript
+function middleNode(head: ListNode | null): ListNode | null {
+  let fast = head, slow = head;
+  while (fast && fast.next) {
+    fast = fast.next.next;
+    slow = slow.next;
+  }
+  return slow; // 慢指针在中间
+}
+```
+
+**对应例题：** [876. 链表的中间结点](https://leetcode.cn/problems/middle-of-the-linked-list/)
+
+##### 场景3：删除倒数第k个节点
+
+**模板代码：**
+
+```typescript
+function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
+  let fast = head, slow = head;
+  // 快指针先跑n步
+  for (let i = 0; i < n; i++) {
+    fast = fast!.next;
+  }
+  if (!fast) return head!.next; // 删头节点
+  // 快慢指针一起跑，快指针到终点时，慢指针在倒数第n+1个节点
+  while (fast.next) {
+    fast = fast.next;
+    slow = slow!.next;
+  }
+  slow!.next = slow!.next!.next; // 删除
+  return head;
+}
+```
+
+**对应例题：** [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+
+#### 2.2 左右指针（Left & Right Pointers）
+
+**指针位置**：两个指针从**两端（开头+结尾）** 出发
+
+**移动规则**：根据条件向中间移动（比如"左指针右移"或"右指针左移"）
+
+**适用场景**：有序数组、回文、区间最值
+
+**核心原理**：利用"两端向中间收缩"的方式，缩小搜索范围，避免遍历所有组合。
+
+**经典场景+模板+例题**：
+
+##### 场景1：有序数组两数之和
+
+**模板代码：**
+
+```typescript
+function twoSum(numbers: number[], target: number): number[] {
+  let left = 0, right = numbers.length - 1;
+  while (left < right) {
+    const sum = numbers[left] + numbers[right];
+    if (sum === target) return [left + 1, right + 1];
+    else if (sum < target) left++; // 太小，左指针右移
+    else right--; // 太大，右指针左移
+  }
+  return [];
+}
+```
+
+**对应例题：** [167. 两数之和 II - 输入有序数组](https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/)
+
+##### 场景2：盛最多水的容器
+
+**模板代码：**
+
+```typescript
+function maxArea(height: number[]): number {
+  let left = 0, right = height.length - 1, max = 0;
+  while (left < right) {
+    // 面积 = 宽度 * 较矮的边
+    const area = (right - left) * Math.min(height[left], height[right]);
+    max = Math.max(max, area);
+    // 移动较矮的边（因为移动高边不会让面积更大）
+    if (height[left] < height[right]) left++;
+    else right--;
+  }
+  return max;
+}
+```
+
+**对应例题：** [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
+
+##### 场景3：验证回文串
+
+**模板代码：**
+
+```typescript
+function isPalindrome(s: string): boolean {
+  s = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  let left = 0, right = s.length - 1;
+  while (left < right) {
+    if (s[left] !== s[right]) return false;
+    left++;
+    right--;
+  }
+  return true;
+}
+```
+
+**对应例题：** [125. 验证回文串](https://leetcode.cn/problems/valid-palindrome/)
+
+#### 2.3 固定窗口指针（Fixed Window Pointers）
+
+**指针位置**：两个指针从**同一端**出发，维护一个"固定大小的窗口"
+
+**移动规则**：左右指针同时移动，保持窗口大小不变
+
+**适用场景**：固定长度的子数组/子串问题
+
+**核心原理**：用窗口覆盖"固定长度的区间"，一次遍历计算所有区间的结果。
+
+**经典场景+模板+例题**：
+
+##### 场景：固定长度子数组的最大和
+
+**模板代码：**
+
+```typescript
+function maxSubarraySum(nums: number[], k: number): number {
+  let sum = 0, max = 0;
+  // 先计算第一个窗口的和
+  for (let i = 0; i < k; i++) {
+    sum += nums[i];
+  }
+  max = sum;
+  // 窗口滑动：左指针右移（减左值），右指针右移（加右值）
+  for (let right = k; right < nums.length; right++) {
+    sum += nums[right] - nums[right - k];
+    max = Math.max(max, sum);
+  }
+  return max;
+}
+```
+
+**对应例题：** [209. 长度最小的子数组（变种）](https://leetcode.cn/problems/minimum-size-subarray-sum/)
+
+#### 2.4 Vue3 diff 四个指针（进阶应用）
+
+**适用场景：**
+
 - Vue3 虚拟 DOM 对比算法
 - 新旧节点列表的高效比较
 
 **核心思想：**
+
 - 使用四个指针（旧头、旧尾、新头、新尾）同时从两端向中间遍历
 - 通过指针移动减少比较次数，提升性能
 
 **参考实现：**
+
 ```typescript
 // Vue3 diff 算法的简化版思路
-function diff(oldList: Node[], newList: Node[]) {
+function diff(oldList: Node[], newList: Node[]): void {
   let oldStart = 0;
   let oldEnd = oldList.length - 1;
   let newStart = 0;
   let newEnd = newList.length - 1;
-  
+
   // 四个指针同时移动，比较并更新
   while (oldStart <= oldEnd && newStart <= newEnd) {
     // 比较逻辑...
+    // 1. 比较旧头和新头
+    // 2. 比较旧尾和新尾
+    // 3. 比较旧头和新尾
+    // 4. 比较旧尾和新头
+    // 根据比较结果移动指针
   }
 }
 ```
 
+### 三、双指针的学习技巧（必看）
+
+1. **先记"移动规则"**：不同分类的核心是"指针怎么动"——快慢指针是"速度差"，左右指针是"向中间收缩"，固定窗口是"同时移动"
+
+2. **先刷"模板题"**：每个分类先做2-3道简单题（比如先刷"环形链表"、"两数之和II"），熟练后再做变种
+
+3. **注意"边界条件"**：比如链表的`fast && fast.next`（避免空指针）、数组的`left < right`（避免越界）
+
+4. **多总结"适用场景"**：看到"环形"、"倒数第k"想快慢指针；看到"有序数组"、"回文"想左右指针；看到"固定长度"想固定窗口
+
+### 四、双指针每日刷题清单
+
+**Day 1：快慢指针基础**
+- [141. 环形链表](https://leetcode.cn/problems/linked-list-cycle/)
+- [876. 链表的中间结点](https://leetcode.cn/problems/middle-of-the-linked-list/)
+
+**Day 2：快慢指针进阶**
+- [142. 环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
+- [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+
+**Day 3：左右指针基础**
+- [167. 两数之和 II - 输入有序数组](https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/)
+- [125. 验证回文串](https://leetcode.cn/problems/valid-palindrome/)
+
+**Day 4：左右指针进阶**
+- [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
+- [344. 反转字符串](https://leetcode.cn/problems/reverse-string/)
+
+**Day 5：固定窗口**
+- [209. 长度最小的子数组](https://leetcode.cn/problems/minimum-size-subarray-sum/)
+- 固定长度子数组的最大和（模板题）
+
+### 总结
+
+双指针是**数组/链表问题的"最优解工具"**，掌握这3类分类+对应的模板，90%的双指针题都能解决。核心是理解"指针的移动规则"，然后根据问题特点选择合适的分类。
+
 ---
 
-## 二、滑动窗口（Sliding Window）
+## 四、滑动窗口（Sliding Window）- 阶段一：核心技巧 ⭐⭐⭐⭐
 
 **适用场景：**
+
 - 连续子数组/子串问题
 - 最长无重复字符子串
 - 最小覆盖子串
@@ -105,38 +430,41 @@ function diff(oldList: Node[], newList: Node[]) {
 - 长度最小的子数组
 
 **核心思想：**
+
 - 用双指针维护一个"动态区间"（窗口）
 - 通过移动窗口边界，减少重复计算
 - 窗口大小可以是固定的或动态的
 
 **算法模板：**
+
 ```typescript
 function slidingWindow(s: string): number {
   let left = 0;
   let right = 0;
   const window = new Map(); // 窗口数据
-  
+
   while (right < s.length) {
     // 扩大窗口
     const c = s[right];
     window.set(c, (window.get(c) || 0) + 1);
     right++;
-    
+
     // 缩小窗口（根据条件）
     while (window需要缩小) {
       const d = s[left];
       window.set(d, window.get(d) - 1);
       left++;
     }
-    
+
     // 更新结果
   }
-  
+
   return result;
 }
 ```
 
 **经典题目：**
+
 - [3. 无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)
 - [76. 最小覆盖子串](https://leetcode.cn/problems/minimum-window-substring/)
 - [239. 滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)
@@ -144,9 +472,10 @@ function slidingWindow(s: string): number {
 
 ---
 
-## 三、递归（Recursion）
+## 五、递归（Recursion）- 阶段一：核心技巧 ⭐⭐⭐⭐
 
 **适用场景：**
+
 - 二叉树遍历（前序、中序、后序）
 - 归并排序
 - 斐波那契数列
@@ -154,30 +483,35 @@ function slidingWindow(s: string): number {
 - 分而治之的问题
 
 **核心思想：**
+
 - 通过"调用自身"拆解问题
 - 必须有终止条件，避免无限递归
 - 利用函数调用栈保存状态
 
 **递归三要素：**
+
 1. **终止条件**：递归何时结束
 2. **递归关系**：如何拆解问题
 3. **返回值**：如何合并子问题的解
 
 **注意事项：**
+
 - 避免栈溢出（深递归时考虑迭代实现）
 - 注意重复计算（可用记忆化优化）
 - 理解递归调用栈的执行顺序
 
 **经典题目：**
+
 - [104. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
 - [509. 斐波那契数](https://leetcode.cn/problems/fibonacci-number/)
 - [206. 反转链表](https://leetcode.cn/problems/reverse-linked-list/)
 
 ---
 
-## 四、动态规划（Dynamic Programming）
+## 六、动态规划（Dynamic Programming）- 阶段二：核心算法 ⭐⭐⭐⭐⭐
 
 **适用场景：**
+
 - 重叠子问题 + 最优子结构
 - 最长递增子序列
 - 背包问题（0-1背包、完全背包）
@@ -186,16 +520,19 @@ function slidingWindow(s: string): number {
 - 股票买卖问题
 
 **核心思想：**
+
 - 用"状态转移方程"记录子问题的解
 - 避免重复计算，提升效率
 - 自底向上或自顶向下求解
 
 **DP 三要素：**
+
 1. **状态定义**：`dp[i]` 表示什么
 2. **状态转移方程**：`dp[i] = f(dp[i-1], ...)`
 3. **边界条件**：初始状态
 
 **解题步骤：**
+
 1. 确定状态（一维/二维）
 2. 写出状态转移方程
 3. 初始化边界条件
@@ -203,6 +540,7 @@ function slidingWindow(s: string): number {
 5. 举例验证
 
 **经典题目：**
+
 - [70. 爬楼梯](https://leetcode.cn/problems/climbing-stairs/)
 - [53. 最大子数组和](https://leetcode.cn/problems/maximum-subarray/)
 - [322. 零钱兑换](https://leetcode.cn/problems/coin-change/)
@@ -211,9 +549,10 @@ function slidingWindow(s: string): number {
 
 ---
 
-## 五、回溯算法（Backtracking）
+## 七、回溯算法（Backtracking）- 阶段二：核心算法 ⭐⭐⭐⭐
 
 **适用场景：**
+
 - 穷举所有可能的问题
 - 全排列
 - 组合总和
@@ -222,11 +561,13 @@ function slidingWindow(s: string): number {
 - 数独求解
 
 **核心思想：**
+
 - "尝试-回退"机制
 - 通过剪枝优化效率
 - 利用递归实现状态回溯
 
 **回溯模板：**
+
 ```typescript
 function backtrack(路径, 选择列表): void {
   // 终止条件
@@ -234,15 +575,15 @@ function backtrack(路径, 选择列表): void {
     结果.push(路径);
     return;
   }
-  
+
   // 遍历选择
   for (选择 of 选择列表) {
     // 做选择
     路径.push(选择);
-    
+
     // 递归
     backtrack(路径, 选择列表);
-    
+
     // 撤销选择（回溯）
     路径.pop();
   }
@@ -250,11 +591,13 @@ function backtrack(路径, 选择列表): void {
 ```
 
 **优化技巧：**
+
 - 剪枝：提前排除不可能的分支
 - 去重：避免重复计算
 - 记忆化：缓存已计算的结果
 
 **经典题目：**
+
 - [46. 全排列](https://leetcode.cn/problems/permutations/)
 - [78. 子集](https://leetcode.cn/problems/subsets/)
 - [39. 组合总和](https://leetcode.cn/problems/combination-sum/)
@@ -262,9 +605,10 @@ function backtrack(路径, 选择列表): void {
 
 ---
 
-## 六、贪心算法（Greedy）
+## 八、贪心算法（Greedy）- 阶段二：核心算法 ⭐⭐⭐
 
 **适用场景：**
+
 - 每一步选局部最优，最终得到全局最优
 - 买卖股票的最佳时机（部分问题）
 - 区间调度问题
@@ -272,20 +616,24 @@ function backtrack(路径, 选择列表): void {
 - 最小生成树（部分算法）
 
 **核心思想：**
+
 - 每一步都做出当前最优的选择
 - 不回溯，不重新考虑已做的选择
 - 需要证明问题满足"贪心选择性质"
 
 **适用条件：**
+
 1. **贪心选择性质**：局部最优能导致全局最优
 2. **最优子结构**：问题的最优解包含子问题的最优解
 
 **注意事项：**
+
 - 不是所有问题都适合贪心
 - 需要严格证明贪心策略的正确性
 - 与动态规划的区别：贪心不保存子问题的解
 
 **经典题目：**
+
 - [121. 买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/)
 - [55. 跳跃游戏](https://leetcode.cn/problems/jump-game/)
 - [435. 无重叠区间](https://leetcode.cn/problems/non-overlapping-intervals/)
@@ -293,9 +641,10 @@ function backtrack(路径, 选择列表): void {
 
 ---
 
-## 七、分治算法（Divide and Conquer）
+## 九、分治算法（Divide and Conquer）- 阶段三：高级应用
 
 **适用场景：**
+
 - 大问题拆成小问题，小问题解合并成大问题解
 - 归并排序
 - 快速排序
@@ -303,15 +652,18 @@ function backtrack(路径, 选择列表): void {
 - 最近点对问题
 
 **核心思想：**
+
 - **分（Divide）**：将问题分解为子问题
 - **治（Conquer）**：递归求解子问题
 - **合（Combine）**：合并子问题的解
 
 **与递归的关系：**
+
 - 分治是递归的常见应用场景
 - 分治通常有明确的"分"和"合"步骤
 
 **经典题目：**
+
 - [归并排序实现](../packages/core/src/algorithms/sort/index.ts)
 - [快速排序实现](../packages/core/src/algorithms/sort/index.ts)
 - [23. 合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/)
@@ -319,115 +671,111 @@ function backtrack(路径, 选择列表): void {
 
 ---
 
-## 八、排序算法（Sorting）
+## 十、复杂场景综合 - 阶段三：高级应用
 
-排序是算法的基础，掌握常见排序算法有助于理解其他算法。
+在实际算法题中，很多问题需要**多种技巧结合**使用，这是算法能力的综合体现。
 
-### 8.1 快速排序（Quick Sort）
+### 10.1 双指针 + 动态规划
 
-**时间复杂度：** 平均 O(nlogn)，最坏 O(n²)  
-**空间复杂度：** O(logn)  
-**稳定性：** 不稳定
+**典型场景：**
 
-**核心思想：**
-- 选择一个基准元素（pivot）
-- 将数组分为两部分：小于基准和大于基准
-- 递归排序两部分
+- 最长回文子串
+- 编辑距离的优化
 
-**适用场景：**
-- 一般情况下的高效排序
-- 数据量大且随机分布
+**示例：**
 
-### 8.2 归并排序（Merge Sort）
+```typescript
+// 最长回文子串：双指针扩展 + DP 优化
+function longestPalindrome(s: string): string {
+  // 结合双指针和动态规划的思路
+}
+```
 
-**时间复杂度：** O(nlogn)  
-**空间复杂度：** O(n)  
-**稳定性：** 稳定
+### 10.2 滑动窗口 + 哈希表
 
-**核心思想：**
-- 将数组不断二分，直到单个元素
-- 合并两个有序数组
-- 分治思想的典型应用
+**典型场景：**
 
-**适用场景：**
-- 需要稳定排序
-- 链表排序
-- 外部排序
+- 最小覆盖子串
+- 找到字符串中所有字母异位词
 
-### 8.3 堆排序（Heap Sort）
+**示例：**
 
-**时间复杂度：** O(nlogn)  
-**空间复杂度：** O(1)  
-**稳定性：** 不稳定
+```typescript
+// 滑动窗口 + 哈希表记录字符频率
+function minWindow(s: string, t: string): string {
+  const need = new Map(); // 哈希表
+  let left = 0,
+    right = 0; // 滑动窗口
+  // ...
+}
+```
 
-**核心思想：**
-- 构建最大堆/最小堆
-- 不断取出堆顶元素
-- 利用堆的性质排序
+### 10.3 回溯 + 剪枝优化
 
-**适用场景：**
-- 需要原地排序
-- TopK 问题
+**典型场景：**
 
----
+- N 皇后问题
+- 数独求解
 
-## 九、搜索算法（Searching）
+**关键点：**
 
-### 9.1 二分查找（Binary Search）
+- 回溯是基础框架
+- 剪枝是性能优化的关键
 
-**时间复杂度：** O(logn)  
-**前提条件：** 有序数组
+### 10.4 分治 + 递归
 
-**核心思想：**
-- 每次排除一半的搜索空间
-- 通过比较中间元素缩小范围
+**典型场景：**
 
-**适用场景：**
-- 有序数组查找
-- 查找边界问题
-- 旋转数组查找
+- 归并排序
+- 快速排序
+- 合并 K 个有序链表
 
-**经典题目：**
-- [704. 二分查找](https://leetcode.cn/problems/binary-search/)
-- [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/)
-- [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/)
+**关键点：**
 
-### 9.2 DFS（深度优先搜索）
+- 分治是思路
+- 递归是实现方式
 
-**适用场景：**
-- 图的遍历
-- 树的遍历
-- 路径问题
-- 连通性问题
+### 10.5 动态规划 + 状态压缩
 
-**核心思想：**
-- 一条路走到黑，再回溯
-- 利用递归或栈实现
+**典型场景：**
 
-**经典题目：**
-- [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/)
-- [695. 岛屿的最大面积](https://leetcode.cn/problems/max-area-of-island/)
-- [79. 单词搜索](https://leetcode.cn/problems/word-search/)
+- 状态空间较大的 DP 问题
+- 位运算优化状态表示
 
-### 9.3 BFS（广度优先搜索）
+**关键点：**
 
-**适用场景：**
-- 最短路径问题（无权图）
-- 层序遍历
-- 扩散问题
+- 用位运算压缩状态
+- 减少空间复杂度
 
-**核心思想：**
-- 一层一层遍历
-- 利用队列实现
+### 10.6 贪心 + 排序
 
-**经典题目：**
-- [102. 二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/)
-- [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/)
-- [127. 单词接龙](https://leetcode.cn/problems/word-ladder/)
+**典型场景：**
+
+- 区间调度问题
+- 活动选择问题
+
+**关键点：**
+
+- 先排序预处理
+- 再用贪心策略选择
+
+### 综合练习建议
+
+1. **从单一技巧开始**：先掌握每种技巧的独立应用
+2. **逐步组合**：理解每种技巧的特点，再思考如何组合
+3. **多做综合题**：LeetCode 中等和困难题往往需要多技巧结合
+4. **总结模式**：识别常见的组合模式，形成解题模板
+
+**经典综合题目：**
+
+- [5. 最长回文子串](https://leetcode.cn/problems/longest-palindromic-substring/) - 双指针 + DP
+- [76. 最小覆盖子串](https://leetcode.cn/problems/minimum-window-substring/) - 滑动窗口 + 哈希表
+- [51. N 皇后](https://leetcode.cn/problems/n-queens/) - 回溯 + 剪枝
+- [23. 合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/) - 分治 + 递归
 
 ---
 
-## 十、算法技巧选择指南
+## 十一、算法技巧选择指南
 
 遇到问题时，按以下思路选择算法：
 
@@ -441,7 +789,7 @@ function backtrack(路径, 选择列表): void {
 
 ---
 
-## 十一、学习建议
+## 十二、学习建议
 
 1. **先理解思想，再刷题**：掌握每种算法的核心思想和适用场景
 2. **从简单题开始**：每种算法先做 2-3 道简单题，理解模板
@@ -451,7 +799,7 @@ function backtrack(路径, 选择列表): void {
 
 ---
 
-## 十二、参考资源
+## 十三、参考资源
 
 - [LeetCode 算法题单](https://leetcode.cn/)
 - [代码随想录](https://programmercarl.com/)
