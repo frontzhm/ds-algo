@@ -39,6 +39,10 @@ export default defineConfig({
         {
           text: '核心算法思想',
           link: '/notes/03-algorithms',
+          items: [
+            { text: '算法思想总览', link: '/notes/03-algorithms' },
+            { text: '双指针详解', link: '/notes/03-01-two-pointers' },
+          ],
         },
         {
           text: '前端专项算法',
