@@ -32,6 +32,8 @@ export default defineConfig({
             { text: '哈希表实现详解', link: '/notes/02-02-hash-table-implementation' },
             { text: '树 & 堆', link: '/notes/02-data-structures#树--堆' },
             { text: '二叉树实现详解', link: '/notes/02-04-binary-tree-implementation' },
+            { text: '二叉树优化版实现', link: '/notes/02-04-binary-tree-optimized' },
+            { text: '堆实现详解', link: '/notes/02-05-heap-implementation' },
           ],
         },
         {
