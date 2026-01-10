@@ -1,0 +1,43 @@
+function d(obstacleGrid) {
+  const m = obstacleGrid.length;
+  const n = obstacleGrid[0].length;
+  const dp = new Array(n + 1).fill(0);
+  // 初始化 第一行
+  for (let j = 1; j <= n; j++) {
+    const curGrid = obstacleGrid[1 - 1][j - 1];
+    const curIsObstacle = curGrid === 1;
+    // 第一行一旦有障碍物，那么障碍物和之后都是0
+    if (!curIsObstacle) {
+      dp[j] = 1;
+      continue;
+    }
+    break;
+  }
+  // 初始化 第一列，注意从第二个开始，上面第一个初始化完毕了
+  for (let i = 2; i <= m; i++) {
+    const curGrid = obstacleGrid[i - 1][1 - 1];
+    const curIsObstacle = curGrid === 1;
+    // 第一列一旦有障碍物，那么障碍物和之后都是0
+    if (!curIsObstacle) {
+      dp[1] = 1;
+      continue;
+    }
+    break;
+  }
+  for (let i = 2; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const curGrid = obstacleGrid[i - 1][j - 1];
+      const curIsObstacle = curGrid === 1;
+      if (curIsObstacle) {
+        dp[j] = 0;
+        continue;
+      }
+      if (j === 1) {
+        dp[j] = 1;
+      } else {
+        dp[j] = dp[j] + dp[j - 1];
+      }
+    }
+  }
+  return dp[n];
+}

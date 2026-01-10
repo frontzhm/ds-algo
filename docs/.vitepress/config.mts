@@ -42,6 +42,17 @@ export default defineConfig({
           items: [
             { text: '算法思想总览', link: '/notes/03-algorithms' },
             { text: '双指针详解', link: '/notes/03-01-two-pointers' },
+            {
+              text: '动态规划',
+              collapsed: false,
+              items: [
+                { text: 'DP基础：五部曲框架', link: '/notes/03-04-dp1' },
+                { text: 'DP进阶：背包问题', link: '/notes/03-04-dp2' },
+                { text: 'DP高级：完全背包变形', link: '/notes/03-04-dp3' },
+                { text: '前端必备DP：10道经典题目', link: '/notes/dp-frontend-blog' },
+                // { text: 'DP实战：20道经典题', link: '/notes/03-04-dp4' },
+              ],
+            },
           ],
         },
         {
