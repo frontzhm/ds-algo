@@ -1,8 +1,25 @@
-# 滑动窗口详解：原理+分类+场景+模板+例题
+# 前端算法必备：滑动窗口从入门到很熟练（最长/最短/计数三大类型）
 
 > 📺 **推荐视频**：[滑动窗口算法详解](https://b23.tv/rU4vRca) - 视频解释非常清晰，建议先看视频再阅读本文！
 
+> 📚 **相关文档**：[双指针详解](https://juejin.cn/post/7593692797765976106) - 滑动窗口是双指针的重要应用
+
 在算法面试中，子串、子数组相关的问题频繁出现，暴力枚举往往因 O(n²) 时间复杂度超时。而滑动窗口算法，凭借其 O(n) 的高效性能，成为解决这类问题的"神兵利器"。本文将从原理本质出发，梳理滑动窗口的分类、适用场景，提炼通用模板，并结合经典例题实战拆解，帮你彻底掌握这一核心算法。
+
+## 📑 目录
+
+- [一、滑动窗口核心原理](#一滑动窗口核心原理用单调性压缩遍历维度)
+  - [1.1 先搞懂：暴力枚举的痛点](#11-先搞懂暴力枚举的痛点)
+  - [1.2 滑动窗口的核心洞察：区间单调性](#12-滑动窗口的核心洞察区间单调性)
+  - [1.3 一句话总结原理](#13-一句话总结原理)
+  - [1.4 剪枝思想：每次移动指针"干掉"某些组合](#14-剪枝思想每次移动指针干掉某些组合)
+- [二、滑动窗口的分类](#二滑动窗口的分类按目标场景划分)
+- [三、适用场景](#三适用场景3个核心判断标准)
+- [四、通用模板](#四通用模板3类场景统一框架)
+- [五、经典例题实战](#五经典例题实战逐行拆解)
+- [六、新手避坑指南](#六新手避坑指南)
+<!-- - [七、前端应用场景](#七前端应用场景) -->
+- [总结](#总结)
 
 # 一、滑动窗口核心原理：用单调性压缩遍历维度
 
@@ -23,6 +40,132 @@
 ## 1.3 一句话总结原理
 
 滑动窗口通过 right 指针“扩窗口”探索新的区间，通过 left 指针“缩窗口”剔除无效区间，每个元素最多被加入窗口（right 移动）和移出窗口（left 移动）各一次，最终以 O(n) 时间完成所有有效区间的枚举。
+
+## 1.4 剪枝思想：每次移动指针"干掉"某些组合
+
+> 🎯 **交互演示**：[点击这里查看动态演示](https://frontzhm.github.io/blog-demo/sliding-window.html) - 通过交互式可视化，直观看到每一步剪掉的组合！
+
+**核心思想**：滑动窗口和相向指针一样，都通过**移动指针来"干掉"某些组合**，实现从 O(n²) 到 O(n) 的优化。
+
+### 1.4.1 理解暴力枚举的搜索空间
+
+以"无重复字符的最长子串"为例，字符串 `s = "abcabcbb"`：
+
+暴力枚举需要检查所有可能的 `(i, j)` 组合，其中 `i ≤ j`。这形成了一个矩阵：
+
+```
+所有可能的组合 (i, j)，其中 i ≤ j：
+
+      j=0  1  2  3  4  5  6  7
+i=0   00 01 02 03 04 05 06 07  ← 第0行
+i=1   -  11 12 13 14 15 16 17  ← 第1行
+i=2   -  -  22 23 24 25 26 27  ← 第2行
+i=3   -  -  -  33 34 35 36 37  ← 第3行
+i=4   -  -  -  -  44 45 46 47  ← 第4行
+i=5   -  -  -  -  -  55 56 57  ← 第5行
+i=6   -  -  -  -  -  -  66 67  ← 第6行
+i=7   -  -  -  -  -  -  -  77  ← 第7行
+
+总共有 N*(N+1)/2 = 8*9/2 = 36 个组合需要检查
+时间复杂度：O(n²)
+```
+
+### 1.4.2 滑动窗口的剪枝策略
+
+**剪枝规则1：如果 `(left, right)` 存在重复字符，则 `(left, right+1...end)` 都存在重复字符**
+
+假设当前 `left = 0`, `right = 3`，窗口 `[0,3] = "abca"` 包含重复字符 'a'：
+
+```
+当前状态：left=0, right=3
+当前窗口：[0,3] = "abca"（存在重复字符 'a'）
+
+矩阵中当前检查的位置：
+      j=0  1  2  3  4  5  6  7
+i=0   00 01 02 [03] 04 05 06 07  ← 当前检查 (0,3)
+i=1   -  11 12 13 14 15 16 17
+i=2   -  -  22 23 24 25 26 27
+...
+
+剪枝逻辑：
+如果 (left, right) 存在重复字符，那么：
+- 所有 (left, right+1) ... (left, end) 都包含重复字符
+- 因为窗口 [left, right+1] 包含窗口 [left, right]，必然也重复
+
+因此，可以剪掉第 left 行的所有后续组合：
+      j=0  1  2  3  4  5  6  7
+i=0   00 01 02 [03] ✂️ ✂️ ✂️ ✂️ ✂️  ← 剪掉整行！
+i=1   -  11 12 13 14 15 16 17
+i=2   -  -  22 23 24 25 26 27
+...
+
+移动 left++，跳过第0行的所有剩余组合
+```
+
+**剪枝规则2：如果 `(left, right)` 不存在重复字符，则 `(left+1...right, right)` 也不存在重复字符**
+
+```
+当前状态：left=0, right=2
+当前窗口：[0,2] = "abc"（不存在重复字符）
+
+矩阵中当前检查的位置：
+      j=0  1  2  3  4  5  6  7
+i=0   00 01 [02] 03 04 05 06 07  ← 当前检查 (0,2)
+i=1   -  11 12 13 14 15 16 17
+i=2   -  -  22 23 24 25 26 27
+...
+
+剪枝逻辑：
+如果 (left, right) 不存在重复字符，那么：
+- 所有 (left+1, right) ... (right, right) 都不存在重复字符
+- 因为窗口 [left+1, right] 是窗口 [left, right] 的子集
+
+因此，可以继续扩展 right，探索更长的有效窗口
+移动 right++，继续探索（不剪枝，但避免重复检查）
+```
+
+### 1.4.3 剪枝效果可视化
+
+每次移动指针，都会剪掉**整行**或**整列**，大大减少搜索空间：
+
+```
+字符串："abcabcbb"
+初始：需要检查 36 个组合
+
+第1步：left=0, right=0, 窗口="a"（无重复）
+       移动 right++，继续探索
+       剩余：36 个组合（未剪枝，但只检查了1个）
+
+第2步：left=0, right=1, 窗口="ab"（无重复）
+       移动 right++，继续探索
+       剩余：36 个组合（未剪枝，但只检查了2个）
+
+第3步：left=0, right=2, 窗口="abc"（无重复）
+       移动 right++，继续探索
+       剩余：36 个组合（未剪枝，但只检查了3个）
+
+第4步：left=0, right=3, 窗口="abca"（有重复！）
+       移动 left++，剪掉第0行的所有剩余组合（4个组合）
+       剩余：36 - 4 = 32 个组合
+
+第5步：left=1, right=3, 窗口="bca"（无重复）
+       移动 right++，继续探索
+       剩余：32 个组合（未剪枝，但只检查了5个）
+
+... 继续剪枝
+
+最终：只需要检查 O(n) 个组合，而不是 O(n²)
+```
+
+**核心思想总结**：
+
+1. **移动 left 指针**：当窗口存在重复字符时，移动 `left++` → 剪掉第 `left` 行的所有剩余组合
+2. **移动 right 指针**：当窗口无重复字符时，移动 `right++` → 继续探索（避免重复检查）
+3. **共同点**：每次移动指针，都会"干掉"某些组合，避免无效计算
+
+这与相向指针的剪枝思想完全一致：**通过移动指针剪掉整行或整列，实现 O(n²) → O(n) 的优化**。
+
+> 💡 **提示**：想要更直观地理解剪枝过程？[点击这里体验交互式演示](https://frontzhm.github.io/blog-demo/sliding-window.html)，每一步都能看到被剪掉的组合！
 
 # 二、滑动窗口的分类：按目标场景划分
 
@@ -194,6 +337,8 @@ function countTemplate(data: number[], param: any): number {
 - **缩窗口条件**：当前加入的字符出现次数>1（进入坏状态）；
 - **更新答案**：缩窗口完成后，计算当前窗口长度，更新最大值。
 
+**剪枝思想**：当窗口 `[left, right]` 存在重复字符时，移动 `left++` → 剪掉第 `left` 行的所有剩余组合 `(left, right+1)` 到 `(left, end)`，因为这些组合必然也包含重复字符。
+
 ### 代码实现
 
 ```typescript
@@ -222,9 +367,141 @@ function lengthOfLongestSubstring(s: string): number {
 }
 ```
 
+### 优化方案：使用 Map 存储字符索引（更快）
+
+**核心优化**：用 `Map` 存储字符的**最新索引**，而不是出现次数。当发现重复字符时，可以直接将 `left` 指针移动到重复字符上次出现的位置+1，避免逐步移动。
+
+**优势**：
+
+- **时间复杂度更优**：最坏情况下仍然是 O(n)，但平均情况下更快
+- **减少循环次数**：不需要 `while` 循环逐步移动 `left`，直接跳转
+
+**代码实现（优化版）：**
+
+```typescript
+function lengthOfLongestSubstring(s: string): number {
+  let left = 0;
+  let ans = 0;
+  const charIndexMap = new Map<string, number>(); // Map：字符 -> 最新索引
+
+  for (let right = 0; right < s.length; right++) {
+    const rightChar = s[right];
+
+    // 如果字符已存在，且索引 >= left（在窗口内），说明有重复
+    if (charIndexMap.has(rightChar) && charIndexMap.get(rightChar)! >= left) {
+      // 直接将 left 移动到重复字符上次出现的位置+1
+      left = charIndexMap.get(rightChar)! + 1;
+    }
+
+    // 更新字符的最新索引
+    charIndexMap.set(rightChar, right);
+
+    // 更新答案：当前窗口是无重复的有效窗口
+    ans = Math.max(ans, right - left + 1);
+  }
+
+  return ans;
+}
+```
+
+**关键点解析**：
+
+1. **`charIndexMap.get(rightChar)! >= left`**：这个判断很重要！
+   - 如果字符的索引 `< left`，说明该字符不在当前窗口内，不算重复
+   - 只有当索引 `>= left` 时，才说明在当前窗口内重复了
+
+2. **直接跳转**：`left = charIndexMap.get(rightChar)! + 1`
+   - 不需要 `while` 循环逐步移动
+   - 直接跳到重复字符上次出现的位置+1
+
+**执行过程示例**：
+
+```typescript
+字符串："abcabcbb"
+
+初始：left = 0, ans = 0, charIndexMap = {}
+
+right=0, char='a':
+  - charIndexMap 中没有 'a'，直接更新
+  - charIndexMap = {'a': 0}
+  - ans = max(0, 0-0+1) = 1
+
+right=1, char='b':
+  - charIndexMap 中没有 'b'，直接更新
+  - charIndexMap = {'a': 0, 'b': 1}
+  - ans = max(1, 1-0+1) = 2
+
+right=2, char='c':
+  - charIndexMap 中没有 'c'，直接更新
+  - charIndexMap = {'a': 0, 'b': 1, 'c': 2}
+  - ans = max(2, 2-0+1) = 3
+
+right=3, char='a':
+  - charIndexMap 中有 'a'，且索引 0 >= left(0)，说明重复！
+  - left = 0 + 1 = 1（直接跳转）
+  - charIndexMap = {'a': 3, 'b': 1, 'c': 2}
+  - ans = max(3, 3-1+1) = 3
+
+right=4, char='b':
+  - charIndexMap 中有 'b'，且索引 1 >= left(1)，说明重复！
+  - left = 1 + 1 = 2（直接跳转）
+  - charIndexMap = {'a': 3, 'b': 4, 'c': 2}
+  - ans = max(3, 4-2+1) = 3
+
+... 继续
+```
+
+**两种方案对比**：
+
+| 方案 | 数据结构 | 移动 left 方式 | 时间复杂度 | 适用场景 |
+| --- | --- | --- | --- | --- |
+| **基础版** | `Record<string, number>`（出现次数） | `while` 循环逐步移动 | O(n) | 理解原理，代码直观 |
+| **优化版** | `Map<string, number>`（最新索引） | 直接跳转到重复位置+1 | O(n) | 性能更优，代码更简洁 |
+
+**推荐**：面试时可以先说基础版，然后提到优化版，展示对算法的深入理解。
+
 ### 复杂度分析
 
-时间复杂度 O(n)：每个字符被 right 加入、left 移出各一次；空间复杂度 O(min(m, n)))：m 是字符集大小，窗口内字符数不超过 min(m, n)。
+- **时间复杂度 O(n)**：每个字符被 right 加入、left 移出各一次，每个元素最多被访问两次
+- **空间复杂度 O(min(m, n))**：m 是字符集大小，窗口内字符数不超过 min(m, n)
+
+**为什么是 O(n) 而不是 O(n²)？**
+
+关键在于：left 和 right 都**只向前移动**，不会回退。每个元素最多被：
+
+- right 访问一次（加入窗口）
+- left 访问一次（移出窗口）
+
+因此总时间复杂度是 O(2n) = O(n)。
+
+### 易错点分析
+
+1. **❌ 错误：在 while 循环外更新答案**
+
+   ```typescript
+   // 错误：窗口可能处于坏状态时就更新了答案
+   while (window[rightChar] > 1) {
+     // ...
+   }
+   ans = Math.max(ans, right - left + 1); // ❌ 应该在while循环后
+   ```
+
+2. **❌ 错误：状态更新顺序错误**
+
+   ```typescript
+   // 错误：先移动left，再更新状态
+   left++;
+   window[leftChar]--; // ❌ 应该先更新状态，再移动left
+   ```
+
+3. **✅ 正确写法**：
+   ```typescript
+   // 先更新状态，再移动指针
+   window[leftChar]--;
+   left++;
+   // 然后在while循环后更新答案
+   ans = Math.max(ans, right - left + 1);
+   ```
 
 ## 例题2：长度最小的子数组（类型2：求最短）
 
@@ -238,6 +515,8 @@ function lengthOfLongestSubstring(s: string): number {
 - **状态统计**：用 sumWindow 记录窗口内元素和；
 - **缩窗口条件**：sumWindow≥target（进入好状态），缩左以寻找更短窗口；
 - **更新答案**：缩窗口过程中，每次缩小后计算窗口长度，更新最小值。
+
+**剪枝思想**：当窗口 `[left, right]` 的和≥target时，移动 `left++` → 剪掉第 `left` 行的所有剩余组合 `(left, right+1)` 到 `(left, end)`，因为这些组合的和必然也≥target（数组元素为正数），但长度更长，不是最优解。
 
 ### 代码实现
 
@@ -266,7 +545,40 @@ function minSubArrayLen(target: number, nums: number[]): number {
 
 ### 复杂度分析
 
-时间复杂度 O(n)：每个元素最多被遍历两次；空间复杂度 O(1)：仅用常数级变量。
+- **时间复杂度 O(n)**：每个元素最多被遍历两次（right 加入一次，left 移出一次）
+- **空间复杂度 O(1)**：仅用常数级变量（left、right、ans、sumWindow）
+
+### 易错点分析
+
+1. **❌ 错误：在 while 循环外更新答案**
+
+   ```typescript
+   // 错误：只在while循环外更新，会漏掉一些有效窗口
+   while (sumWindow >= target) {
+     sumWindow -= nums[left];
+     left++;
+   }
+   ans = Math.min(ans, right - left + 1); // ❌ 应该在while循环内更新
+   ```
+
+2. **❌ 错误：边界处理缺失**
+
+   ```typescript
+   // 错误：没有处理无满足条件窗口的情况
+   return ans; // ❌ 如果ans还是Infinity，应该返回0
+   ```
+
+3. **✅ 正确写法**：
+   ```typescript
+   // 在while循环内更新答案（每次缩小窗口时）
+   while (sumWindow >= target) {
+     ans = Math.min(ans, right - left + 1); // ✅ 在循环内更新
+     sumWindow -= nums[left];
+     left++;
+   }
+   // 处理边界：无满足条件的窗口返回0
+   return ans !== Infinity ? ans : 0; // ✅ 检查是否更新过
+   ```
 
 ## 例题3：乘积小于 K 的子数组（类型3：求计数）
 
@@ -280,6 +592,8 @@ function minSubArrayLen(target: number, nums: number[]): number {
 - **状态统计**：用 prod 记录窗口内元素乘积；
 - **缩窗口条件**：prod≥k（进入坏状态），缩左直到乘积<k；
 - **更新答案**：缩窗口完成后，当前 right 对应的有效子数组数为 right-left+1（即 [left,right]、[left+1,right]...[right,right]）。
+
+**剪枝思想**：当窗口 `[left, right]` 的乘积≥k时，移动 `left++` → 剪掉第 `left` 行的所有剩余组合 `(left, right+1)` 到 `(left, end)`，因为这些组合的乘积必然也≥k（数组元素为正数）。
 
 ### 代码实现
 
@@ -314,7 +628,36 @@ function numSubarrayProductLessThanK(nums: number[], k: number): number {
 
 ### 复杂度分析
 
-时间复杂度 O(n)：每个元素最多被遍历两次；空间复杂度 O(1)：仅用常数级变量。
+- **时间复杂度 O(n)**：每个元素最多被遍历两次（right 加入一次，left 移出一次）
+- **空间复杂度 O(1)**：仅用常数级变量（left、right、ans、prod）
+
+### 易错点分析
+
+1. **❌ 错误：边界条件未处理**
+
+   ```typescript
+   // 错误：没有处理 k≤1 的情况
+   function numSubarrayProductLessThanK(nums, k) {
+     let prod = 1;
+     // ... 直接开始循环 ❌
+   }
+   ```
+
+2. **❌ 错误：计数逻辑理解错误**
+
+   ```typescript
+   // 错误：每次只加1，没有理解"以right结尾的所有子数组"
+   ans += 1; // ❌ 应该是 right - left + 1
+   ```
+
+3. **✅ 正确理解**：
+   ```typescript
+   // 当窗口 [left, right] 的乘积 < k 时
+   // 以 right 结尾的所有子数组都满足条件：
+   // [left,right]、[left+1,right]...[right,right]
+   // 共 right - left + 1 个
+   ans += right - left + 1; // ✅ 正确
+   ```
 
 # 六、新手避坑指南
 
@@ -331,9 +674,238 @@ function numSubarrayProductLessThanK(nums: number[], k: number): number {
 
 4. **单调性验证**：遇到子串/子数组问题时，先手动模拟 2-3 个案例，确认状态是否满足单调性，再决定是否用滑动窗口。
 
-# 七、总结
+5. **更新答案的时机**：
+   - **类型1（求最长）**：在 while 循环**之后**更新，确保窗口处于好状态
+   - **类型2（求最短）**：在 while 循环**内部**更新，每次缩小窗口时都更新
+   - **类型3（求计数）**：在 while 循环**之后**更新，累加有效区间数
 
-滑动窗口的核心是「用单调性压缩遍历维度」，剪枝只是优化手段。掌握它的关键在于：
+6. **状态更新顺序**：
+
+   ```typescript
+   // ✅ 正确顺序：先更新状态，再移动指针
+   window[leftChar]--; // 1. 更新状态
+   left++; // 2. 移动指针
+
+   // ❌ 错误顺序：先移动指针，再更新状态（会导致状态不一致）
+   left++;
+   window[leftChar]--; // 此时leftChar已经是下一个字符了！
+   ```
+
+7. **边界情况检查清单**：
+   - [ ] 空字符串/空数组：`if (s.length === 0) return 0;`
+   - [ ] 单元素：`if (s.length === 1) return 1;`
+   - [ ] 求最短时，检查 ans 是否更新过：`return ans !== Infinity ? ans : 0;`
+   - [ ] 乘积问题时，检查 k≤1：`if (k <= 1) return 0;`
+
+<!--
+
+# 七、前端应用场景
+
+滑动窗口在前端开发中有很多实际应用，掌握它不仅能解决算法题，还能优化实际业务代码。
+
+## 7.1 搜索建议（防抖优化）
+
+**场景**：用户输入搜索关键词时，实时显示搜索建议。
+
+**问题**：如果每次输入都发送请求，会导致请求过多，性能差。
+
+**解决方案**：使用滑动窗口 + 防抖，只在用户停止输入一段时间后才发送请求。
+
+```typescript
+function debounceSearch(input: string, delay: number = 300): void {
+  let timer: NodeJS.Timeout;
+
+  // 滑动窗口：维护一个时间窗口，窗口内只执行最后一次
+  return function (searchTerm: string) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      // 发送搜索请求
+      fetchSearchSuggestions(searchTerm);
+    }, delay);
+  };
+}
+
+// 使用示例
+const debouncedSearch = debounceSearch('', 300);
+input.addEventListener('input', e => {
+  debouncedSearch(e.target.value);
+});
+```
+
+## 7.2 无限滚动加载
+
+**场景**：滚动到底部时加载更多内容。
+
+**问题**：滚动事件触发频繁，需要判断是否真的到达底部。
+
+**解决方案**：使用滑动窗口判断滚动位置。
+
+```typescript
+function setupInfiniteScroll(loadMore: () => void) {
+  let lastScrollTop = 0; // 上次滚动位置（左指针）
+  const threshold = 100; // 距离底部的阈值
+
+  window.addEventListener('scroll', () => {
+    const currentScrollTop = window.scrollY; // 当前滚动位置（右指针）
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // 滑动窗口：判断是否到达底部
+    if (currentScrollTop + windowHeight >= documentHeight - threshold) {
+      loadMore();
+      lastScrollTop = currentScrollTop; // 更新左指针
+    }
+  });
+}
+```
+
+## 7.3 性能监控：统计时间窗口内的错误率
+
+**场景**：监控前端错误，统计最近5分钟内的错误率。
+
+**解决方案**：使用滑动窗口维护时间窗口内的错误记录。
+
+```typescript
+class ErrorMonitor {
+  private errors: Array<{ timestamp: number; error: Error }> = [];
+  private windowSize = 5 * 60 * 1000; // 5分钟（毫秒）
+
+  recordError(error: Error): void {
+    const now = Date.now();
+    this.errors.push({ timestamp: now, error });
+
+    // 滑动窗口：移除窗口外的错误记录
+    while (this.errors.length > 0 && now - this.errors[0].timestamp > this.windowSize) {
+      this.errors.shift(); // 移除最旧的记录
+    }
+  }
+
+  getErrorRate(): number {
+    const now = Date.now();
+    // 确保窗口内的记录都是有效的
+    while (this.errors.length > 0 && now - this.errors[0].timestamp > this.windowSize) {
+      this.errors.shift();
+    }
+
+    // 计算错误率（假设总请求数为 totalRequests）
+    return this.errors.length / this.getTotalRequestsInWindow();
+  }
+}
+```
+
+## 7.4 数据流处理：实时统计最近N条数据的平均值
+
+**场景**：实时显示最近100条数据的平均值（如股票价格、温度等）。
+
+**解决方案**：使用滑动窗口维护固定大小的数据窗口。
+
+```typescript
+class MovingAverage {
+  private window: number[] = [];
+  private windowSize: number;
+  private sum: number = 0;
+
+  constructor(windowSize: number) {
+    this.windowSize = windowSize;
+  }
+
+  add(value: number): number {
+    this.window.push(value);
+    this.sum += value;
+
+    // 滑动窗口：如果超过窗口大小，移除最旧的元素
+    if (this.window.length > this.windowSize) {
+      const removed = this.window.shift()!;
+      this.sum -= removed;
+    }
+
+    return this.getAverage();
+  }
+
+  getAverage(): number {
+    return this.window.length > 0 ? this.sum / this.window.length : 0;
+  }
+}
+
+// 使用示例：实时显示最近100条数据的平均值
+const ma = new MovingAverage(100);
+dataStream.on('data', value => {
+  const avg = ma.add(value);
+  updateUI(avg);
+});
+```
+
+## 7.5 文本编辑器：查找和替换功能
+
+**场景**：在文本编辑器中查找特定模式的文本（如查找所有连续的数字）。
+
+**解决方案**：使用滑动窗口匹配模式。
+
+```typescript
+function findPattern(text: string, pattern: string): number[] {
+  const results: number[] = [];
+  const patternLen = pattern.length;
+  let left = 0;
+
+  // 滑动窗口：固定窗口大小（pattern的长度）
+  for (let right = patternLen - 1; right < text.length; right++) {
+    const window = text.substring(left, right + 1);
+
+    if (window === pattern) {
+      results.push(left); // 记录匹配位置
+    }
+
+    left++; // 窗口滑动
+  }
+
+  return results;
+}
+```
+
+## 7.6 性能优化：虚拟列表（Virtual List）
+
+**场景**：渲染大量列表项时，只渲染可见区域内的项。
+
+**解决方案**：使用滑动窗口确定可见区域。
+
+```typescript
+class VirtualList {
+  private itemHeight: number;
+  private containerHeight: number;
+  private scrollTop: number = 0;
+
+  getVisibleRange(): { start: number; end: number } {
+    const start = Math.floor(this.scrollTop / this.itemHeight);
+    const visibleCount = Math.ceil(this.containerHeight / this.itemHeight);
+    const end = start + visibleCount;
+
+    return { start, end };
+  }
+
+  onScroll(scrollTop: number): void {
+    this.scrollTop = scrollTop;
+    // 滑动窗口：只渲染可见区域内的项
+    const { start, end } = this.getVisibleRange();
+    this.renderItems(start, end);
+  }
+}
+```
+
+## 7.7 总结：前端应用的核心思路
+
+滑动窗口在前端的应用核心是**时间窗口**和**数据窗口**：
+
+1. **时间窗口**：在一段时间内只执行一次操作（防抖、节流）
+2. **数据窗口**：只处理窗口内的数据（无限滚动、性能监控）
+3. **固定窗口**：窗口大小固定（虚拟列表、分页）
+4. **可变窗口**：窗口大小可变（搜索建议、错误监控）
+
+掌握滑动窗口，不仅能解决算法题，还能优化实际业务代码的性能！
+-->
+
+# 总结
+
+滑动窗口的核心是「用单调性压缩遍历维度」，通过**移动指针剪掉整行或整列**实现剪枝优化。掌握它的关键在于：
 
 1. 判断问题是否满足「连续区间+状态单调性+状态可快速更新」；
 
@@ -342,6 +914,24 @@ function numSubarrayProductLessThanK(nums: number[], k: number): number {
 3. 套用通用模板，灵活调整状态统计工具（哈希表/和/积）。
 
 只要抓住这三点，无论是简单的“无重复子串”，还是复杂的“最小覆盖子串”，都能按此逻辑拆解。建议多做几道经典例题，固化模板思维，面试时就能快速反应。
+
+### 核心要点回顾
+
+1. **判断标准**：连续区间 + 状态单调性 + 状态可快速更新
+2. **剪枝思想**：每次移动指针，都会"干掉"某些组合（剪掉整行或整列），实现 O(n²) → O(n) 优化
+3. **三种类型**：
+   - 类型1（求最长）：坏状态时缩窗，缩窗后更新答案
+   - 类型2（求最短）：好状态时缩窗，缩窗过程中更新答案
+   - 类型3（求计数）：坏状态时缩窗，缩窗后累加有效区间数
+4. **模板步骤**：初始化 → 扩窗口 → 缩窗口 → 更新答案
+5. **时间复杂度**：O(n)，每个元素最多被访问两次
+6. **空间复杂度**：O(1) 或 O(min(m,n))，取决于状态统计方式
+
+### 相关资源
+
+- 📖 [双指针详解](https://juejin.cn/post/7593692797765976106) - 滑动窗口是双指针的重要应用
+- 📖 [算法思想总览](./03-algorithms.md) - 了解滑动窗口在算法体系中的位置
+- 💻 [LeetCode 滑动窗口专题](https://leetcode.cn/tag/sliding-window/) - 刷题练习
 
 ## 练习题推荐
 
@@ -361,5 +951,9 @@ function numSubarrayProductLessThanK(nums: number[], k: number): number {
 
 ### 扩展题（挑战）
 
+~ 一般我走到这里就回去了，有兴趣就继续~
+
 - [239. 滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/) - 需要结合单调队列
 - [424. 替换后的最长重复字符](https://leetcode.cn/problems/longest-repeating-character-replacement/) - 类型1：变种
+
+---

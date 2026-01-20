@@ -1,18 +1,21 @@
-function d(prices) {
-  const count = prices.length;
-  // dp[i]表示第i天卖的话 能获得的最大利润
-  const dp = new Array(count).fill(0);
-
-  for (let i = 1; i < count; i++) {
-    let max = 0;
-    const curPrice = prices[i];
-    for (let j = 0; j < i; j++) {
-      if (curPrice > prices[j]) {
-        max = Math.max(max, curPrice - prices[j]);
+function subsetsWithDup(nums) {
+  const res = [];
+  const len = nums.length;
+  // 排序 重复的数字会挨着 方便剪枝
+  nums.sort((x, y) => x - y);
+  function backtrack(path, startIndex) {
+    res.push([...path]);
+    for (let i = startIndex; i < len; i++) {
+      if (i > startIndex && nums[i] === nums[i - 1]) {
+        continue;
       }
+      const cur = nums[i];
+      path.push(cur);
+      backtrack(path, i + 1);
+      path.pop();
     }
-    dp[i] = max;
   }
-  return Math.max(...dp);
+  backtrack([], 0);
+  return res;
 }
-console.log(d([7, 1, 5, 3, 6, 4]));
+console.log(subsetsWithDup([1, 2, 2]));

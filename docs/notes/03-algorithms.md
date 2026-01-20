@@ -177,7 +177,7 @@
 - [167. 两数之和 II - 输入有序数组](https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/)
 - [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
 
-📖 **详细内容请参考：** [双指针详解](./03-01-two-pointers.md)
+📖 **详细内容请参考：** [双指针详解](https://juejin.cn/post/7593692797765976106)
 
 ---
 
