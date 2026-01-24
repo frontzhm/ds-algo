@@ -3,5 +3,5 @@ node_modules/
 dist/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
-*.md # 可选：忽略 Markdown 格式化（如需格式化可安装 prettier-plugin-md）
+# *.md # 已注释：允许 Prettier 格式化 Markdown 文件
 

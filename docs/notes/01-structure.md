@@ -1,5 +1,12 @@
 # 前端工程师必刷算法题清单：分板块高效学习指南
 
+![算法框架dp_route.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/dp_route.png)
+
+[laluladong网站](https://labuladong.online/zh/roadmap/)
+
+
+
+
 对前端工程师而言，算法不是“炫技项”，而是**中大厂面试敲门砖**、**业务性能优化利器**。不同于后端/算法岗，前端算法学习讲究“精准聚焦、贴合业务”，无需死磕难题偏题。本文按**高频板块**梳理必刷题目（附LeetCode直达链接），配套学习方法与前端应用场景，帮你高效构建算法知识体系。
 
 ## 核心学习原则

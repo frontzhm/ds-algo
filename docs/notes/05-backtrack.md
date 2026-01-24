@@ -1094,3 +1094,31 @@ console.log(subsetsWithDup([2, 1, 2]));
   - **sum剪枝**（所有求和类问题）：`sum + cur > target` → break（需先排序）。
 
 记住“组合看start、排列看used、子集全保存”的口诀，就能快速适配所有这类回溯问题～
+
+输入：digits = "23" 输出：["ad","ae","af","bd","be","bf","cd","ce","cf"] 示例 2：
+
+输入：digits = "2" 输出：["a","b","c"]
+
+```ts
+function letterCombinations(digits: string): string[] {
+  const res = [];
+  const arr = ['', '', 'abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz'];
+  const len = digits.length;
+  function backtrack(path, startIndex) {
+    if (path.length === len) {
+      res.push([...path]);
+      return;
+    }
+    for (let i = startIndex; i <= 9; i++) {
+      const curStrs = arr[i];
+      for (let j = 0; j < curStrs.length; j++) {
+        path.push(curStrs[j]);
+        backtrack([], i);
+        path.pop();
+      }
+    }
+  }
+  backtrack([], 2);
+  return res;
+}
+```
