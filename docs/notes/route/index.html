@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #app {
+      width: 100%;
+      height: 100%;
+      background-color: #f0f0f0;
+    }
+    /* 统一使用Linux内置的DejaVu Sans（带常规/加粗字重） */
+    #dom, #dom1, #dom2, #dom3 {
+      font-family: Arial, sans-serif;
+      font-size: 20px; /* 放大字体，加粗效果更明显 */
+      margin: 10px 0;
+    }
+    #dom{ font-weight: bold; }
+    #dom1{ font-weight: 700; }
+    #dom2{ font-weight: bold; }
+    #dom3{ font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="dom">DejaVu Sans bold</div>
+    <div id="dom1">DejaVu Sans 700</div>
+    <div id="dom2">DejaVu Sans bold</div>
+    <div id="dom3">DejaVu Sans 700</div>
+    <div id="render-finish">渲染完成</div>
+  </div>
+</body>
+</html>
