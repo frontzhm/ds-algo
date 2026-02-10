@@ -238,6 +238,158 @@ var mergeKLists = function(lists) {
 
 **核心思路**：将「矩阵的每一行」视为「升序链表」，复用「合并k个链表」的堆思路——每行一个指针，堆存储「行索引+当前值」，每次取最小值后将该行下一个值入堆。
 
+```js
+/**
+ * 通用优先队列实现（支持大顶堆/小顶堆，基于完全二叉树+数组存储）
+ * @param {Function} compareFn - 比较函数，决定堆类型：
+ *                                返回值是负数的时候，第一个参数的优先级更高
+ *                               - 小顶堆（默认）：(a,b) => a - b（返回负数则a优先级高）
+ *                               - 大顶堆：(a,b) => b - a（返回负数则b优先级高）
+ */
+class PriorityQueue1 {
+  constructor(compareFn = (a, b) => a - b) {
+    this.compareFn = compareFn; // 自定义比较函数（核心：替代硬编码比较）
+    this.size = 0; // 堆的有效元素个数（≠queue.length，避免数组空洞）
+    this.queue = []; // 物理存储数组（逻辑完全二叉树）
+  }
+
+  // 入队：添加元素并上浮堆化
+  enqueue(val) {
+    // 1. 把新元素放到数组末尾（完全二叉树的最后一个节点）
+    this.queue[this.size] = val;
+    // 2. 上浮：维护堆的性质（从新元素位置向上调整）
+    this.swim(this.size);
+    // 3. 有效元素个数+1（先swim再++，因为swim需要当前索引）
+    this.size++;
+  }
+
+  // 出队：移除并返回堆顶元素，最后一个元素补位后下沉堆化
+  dequeue() {
+    // 边界：空队列返回null
+    if (this.size === 0) return null;
+    // 1. 保存堆顶元素（要返回的值）
+    const peek = this.queue[0];
+    // 2. 最后一个元素移到堆顶（完全二叉树补位）
+    this.queue[0] = this.queue[this.size - 1];
+    // 3. 下沉：维护堆的性质（从堆顶向下调整）
+    this.sink(0);
+    // 4. 有效元素个数-1（堆大小减小）
+    this.size--;
+    // 可选：清空数组空洞（非必需，但更优雅）
+    this.queue.length = this.size;
+    return peek;
+  }
+
+  // 获取堆顶元素（不出队）
+  head() {
+    return this.size === 0 ? null : this.queue[0];
+  }
+
+  // 获取父节点索引
+  parent(idx) {
+    return Math.floor((idx - 1) / 2);
+  }
+
+  // 获取左子节点索引
+  left(idx) {
+    return idx * 2 + 1;
+  }
+
+  // 获取右子节点索引
+  right(idx) {
+    return idx * 2 + 2;
+  }
+
+  // 交换两个节点的值
+  swap(idx1, idx2) {
+    [this.queue[idx1], this.queue[idx2]] = [this.queue[idx2], this.queue[idx1]];
+  }
+
+  // 上浮（swim）：从idx向上调整，维护堆性质
+  swim(idx) {
+    // 循环：直到根节点（idx=0）或当前节点不小于父节点
+    while (idx > 0) {
+      const parentIdx = this.parent(idx);
+      // 核心：用compareFn替代硬编码比较
+      // compareFn(a,b) < 0 → a优先级更高（应上浮）
+      if (this.compareFn(this.queue[idx], this.queue[parentIdx]) >= 0) {
+        break; // 当前节点优先级不高于父节点，停止上浮
+      }
+      // 交换当前节点和父节点
+      this.swap(idx, parentIdx);
+      // 继续向上检查
+      idx = parentIdx;
+    }
+  }
+
+  // 下沉（sink）：从idx向下调整，维护堆性质
+  sink(idx) {
+    // 循环：直到没有左子节点（完全二叉树，左子不存在则右子也不存在）
+    while (this.left(idx) < this.size) {
+      const leftIdx = this.left(idx);
+      const rightIdx = this.right(idx);
+      // 找到“优先级更高”的子节点（小顶堆找更小的，大顶堆找更大的）
+      let priorityIdx = leftIdx;
+
+      // 右子节点存在，且右子优先级更高 → 切换到右子
+      if (rightIdx < this.size && this.compareFn(this.queue[rightIdx], this.queue[leftIdx]) < 0) {
+        priorityIdx = rightIdx;
+      }
+
+      // 当前节点优先级 ≥ 子节点 → 停止下沉
+      if (this.compareFn(this.queue[idx], this.queue[priorityIdx]) <= 0) {
+        break;
+      }
+
+      // 交换当前节点和优先级更高的子节点
+      this.swap(idx, priorityIdx);
+      // 继续向下检查
+      idx = priorityIdx;
+    }
+  }
+
+  // 辅助：判断队列是否为空
+  isEmpty() {
+    return this.size === 0;
+  }
+}
+/**
+ * @param {number[][]} matrix
+ * @param {number} k
+ * @return {number}
+ */
+var kthSmallest = function(matrix, k) {
+  const rows = matrix.length
+  const cols = matrix[0].length
+  // 每一行，都有一个指针，pArr[0]表示第0行的指针，pArr[1]表示第1行的指针，
+  let pArr = new Array(rows).fill(0)
+  // 返回值
+  let res
+  // 这里因为需要存储第几行的信息，所以queue队列里存储的不单单是val 还有row的信息，这样的话，需要重新写compareFn
+  const pq = new PriorityQueue1(([row1,val1],[row2,val2])=>val1-val2)
+  // 每行的第一个元素进队
+  for(let row=0;row<rows;row++){
+    pq.enqueue([row,matrix[row][0]])
+  }
+  // 当队存在且k>0的时候 说明需要继续
+  while(pq.size>0 && k>0){
+    // 出队的是当前最小的
+    const [curRow,curVal] = pq.dequeue()
+    // 值存下
+    res = curVal
+    // 循环k次就能获取到k小的值
+    k--
+    const nextCol = pArr[curRow]+1
+    if(nextCol<cols){
+      pArr[curRow] = nextCol
+      pq.enqueue([curRow,matrix[curRow][nextCol]])
+    }
+  }
+  return res
+
+};
+```
+
 **易错点**：
 
 - 堆中仅存储值，未记录行索引，无法找到下一个要入堆的值；
