@@ -1,30 +1,42 @@
-var minSubArrayLen = function(target, nums) {
-  const len = nums.length
-  if(len === 0 ) return 0
-  let left = 0
-  let right = 0
-  let minLen = Infinity
-  let windowSum = 0
-
-  while(right<len){
-    const rNum = nums[right]
-    right++
-    windowSum+=rNum
-    console.log('right',windowSum)
-    while(windowSum>=target){
-      const lNum = nums[left]
-
-      minLen = Math.min(minLen,right-left)
-      // console.log(windowSum,left,right,minLen)
-      left++
-      windowSum -=lNum
-      console.log('left', windowSum)
+var evalRPN = function(tokens) {
+  const len = tokens.length
+  if(len ===0) return 0
+  if(len ===1) return Number(tokens[0])
+  const signs = new Set(['+','-','*','/'])
+  const stack = []
+  for(let i=0;i<len;i++){
+    const cur = tokens[i]
+    const isSign = signs.has(cur)
+    if(!isSign){
+      stack.push(Number(cur))
+    }else{
+      const after = stack.pop()
+      const before = stack.pop()
+      const newVal = cal(before,after,cur)
+      stack.push(newVal)
     }
 
   }
-  return minLen === Infinity ? 0 : minLen
+  return stack.pop()
+  function cal(before,after,sign){
+    switch (sign) {
+      case '+':
+        return before+after
+      case '-':
+        return before-after
+      case '*':
+        return before*after
+      case '/':
+        return Math.trunc(before/after)
+
+      default:
+        break;
+    }
+
+  }
 };
 
 
-minSubArrayLen(40,[1,1,4])
 
+
+console.log(evalRPN(["10","6","9","3","+","-11","*","/","*","17","+","5","+"]))
